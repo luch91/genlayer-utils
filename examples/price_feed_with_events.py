@@ -5,6 +5,39 @@
 
 from genlayer import *
 
+# helpers copied from genlayer-utils, to make this contract self‑contained
+
+def require_sender(expected):
+    if gl.message.sender_address != expected:
+        raise Exception("Unauthorized: caller is not the expected address")
+
+
+def append_indexed_event(event_table: TreeMap, event_name: str, topics, blob):
+    arr = event_table.get_or_insert_default(event_name)
+    arr.append({"topics": topics, "blob": blob})
+
+
+def query_indexed_events(event_table: TreeMap, event_name: str, offset: int = 0, limit: int = 100):
+    if event_name not in event_table:
+        return []
+    arr = event_table[event_name]
+    end = offset + limit
+    try:
+        return arr[offset:end]
+    except Exception:
+        items = []
+        idx = 0
+        for item in arr:
+            if idx < offset:
+                idx += 1
+                continue
+            if len(items) >= limit:
+                break
+            items.append(item)
+            idx += 1
+        return items
+
+
 class PriceFeedWithEvents(gl.Contract):
     _prices: TreeMap[str, u256]
     _events: TreeMap[str, DynArray[dict]]
