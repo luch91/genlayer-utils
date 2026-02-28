@@ -46,6 +46,7 @@ result = web_llm_strict(url=source_url, prompt_template=prompt)
 | **[access_control](docs/access-control.md)** | Owner & role-based guards | `require_sender()`, `require_value()`, Ownable pattern, Role-based pattern |
 | **[web_oracle](docs/web-oracle.md)** | Web data extraction with consensus | `fetch_json_api()`, `fetch_price()`, `fetch_score()`, `fetch_and_extract()` |
 | **[storage](docs/storage-helpers.md)** | TreeMap/DynArray utilities | `increment_or_init()`, `treemap_paginate()`, `address_map_to_dict()` |
+| **[best_practices](docs/best-practices.md)** | Full patterns & guidance | comprehensive guide covering nondet, prompts, access, storage, debugging |
 
 ---
 
@@ -79,6 +80,17 @@ class MyContract(gl.Contract):
 ```
 
 See [Getting Started](docs/getting-started.md) for the full guide.
+
+## Best Practices & Patterns
+
+The project grew out of a long-form [guide](https://gist.github.com/luch91/d865f976ed04785890ca6cf84ef13cce)
+that was originally proposed in the official documentation repo (issue #345).
+Rather than leaving it in a gist, we now maintain the content under `docs/best-practices.md`.
+It collects the most common contract patterns, prompt‑engineering tips, access control recipes,
+storage utilities and debugging advice.  This is the canonical place to start when writing
+a new GenLayer contract.
+
+Feel free to read the file directly or browse the examples in this repository.
 
 ---
 
