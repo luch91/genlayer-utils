@@ -104,3 +104,39 @@ Example: paginating a `TreeMap` in a view method.
 ```text
 # end of document
 ```
+
+## Event Indexing Pattern
+
+The SDK currently exposes `gl.advanced.emit_raw_event()` but doesn't provide a
+first-class query API. A practical workaround is to store emitted events in on‑chain
+storage so view methods can return historical event data to frontends.
+
+Pattern:
+
+1. Add a storage field on your contract: `self._events: TreeMap[str, DynArray[dict]]`
+2. When emitting an event, also append a record via a helper like
+    `append_indexed_event(self._events, "MyEvent", topics, blob)`
+3. Provide a view method that calls `query_indexed_events(self._events, "MyEvent", offset, limit)`
+
+See `src/genlayer_utils/storage.py` for `append_indexed_event()` and `query_indexed_events()` helpers.
+
+## Upgrade / Proxy Pattern
+
+When upgradeability is required, implement a minimal proxy that forwards
+unknown methods to an implementation contract using `__handle_undefined_method__`.
+
+Example (see `examples/upgrade_proxy.py`):
+
+1. Proxy stores `self._impl: Address` and `self._owner: Address` on deployment.
+2. `upgrade(new_impl)` is owner-only and sets `self._impl`.
+3. `__handle_undefined_method__` forwards unknown write calls to the implementation by
+    resolving `gl.get_contract_at(self._impl)` and calling the method dynamically.
+
+Note: This is an application-level pattern; for safety, ensure storage layout and
+method signatures are compatible between implementations.
+
+> For the full original text, see the [gist](https://gist.github.com/luch91/d865f976ed04785890ca6cf84ef13cce).
+
+```text
+# end of document
+```

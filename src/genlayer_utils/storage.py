@@ -146,3 +146,60 @@ def treemap_count(data: TreeMap) -> int:
     for _ in data.items():
         count += 1
     return count
+
+
+def append_indexed_event(event_table: TreeMap, event_name: str, topics: list[bytes] | tuple[bytes, ...], blob) -> None:
+    """
+    Append an event record to an in-contract event index.
+
+    Pattern: contracts that want queryable events keep a storage field like
+    `self._events: TreeMap[str, DynArray[dict]]` where each event name maps to a
+    `DynArray` of event records: `{"topics": [...], "blob": ...}`.
+
+    This helper appends a record to that array so frontends can query
+    event history via view methods.
+
+    Args:
+        event_table: TreeMap[str, DynArray] stored on the contract instance
+        event_name: name of the event (string)
+        topics: list or tuple of indexed bytes values
+        blob: encodable payload
+    """
+    arr = event_table.get_or_insert_default(event_name)
+    # arr should be a DynArray of plain dicts
+    arr.append({"topics": topics, "blob": blob})
+
+
+def query_indexed_events(event_table: TreeMap, event_name: str, offset: int = 0, limit: int = 100) -> list:
+    """
+    Query events previously stored with `append_indexed_event`.
+
+    Args:
+        event_table: TreeMap[str, DynArray] used for indexing events
+        event_name: Name of event to query
+        offset: Start index (0-based)
+        limit: Maximum number of records to return
+
+    Returns:
+        List of event records (dicts)
+    """
+    if event_name not in event_table:
+        return []
+    arr = event_table[event_name]
+    # DynArray supports slice access returning list
+    end = offset + limit
+    try:
+        return arr[offset:end]
+    except Exception:
+        # Fall back to manual iteration
+        items = []
+        idx = 0
+        for item in arr:
+            if idx < offset:
+                idx += 1
+                continue
+            if len(items) >= limit:
+                break
+            items.append(item)
+            idx += 1
+        return items

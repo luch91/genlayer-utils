@@ -118,3 +118,52 @@ def web_llm_comparative(
         return gl.nondet.exec_prompt(filled_prompt)
 
     return gl.eq_principle.prompt_comparative(_inner, principle)
+
+
+def exec_prompt_with_retry(prompt: str, *, response_format: str = "json", max_retries: int = 3) -> dict | str:
+    """
+    Run `gl.nondet.exec_prompt` with simple retry logic for transient failures.
+
+    Note: this is a thin helper that retries exceptions raised by the
+    underlying call. It does not add timeouts (those are platform/SDK
+    features) but it can improve robustness in the face of intermittent
+    provider errors.
+
+    Usage: call from inside an equivalence leader function.
+    """
+    attempt = 0
+    last_exc = None
+    while attempt < max_retries:
+        try:
+            result = gl.nondet.exec_prompt(prompt, response_format=response_format)
+            if isinstance(result, dict):
+                return json.dumps(result, sort_keys=True) if response_format == "json" else result
+            return result
+        except Exception as e:
+            last_exc = e
+            attempt += 1
+            # No sleep available in GenVM; just retry immediately.
+            continue
+    # If we exhausted retries, re-raise the last exception to surface the error
+    raise last_exc
+
+
+def web_render_with_retry(url: str, *, mode: str = "text", max_retries: int = 3, wait_after_loaded: str | None = None) -> str:
+    """
+    Render a webpage with retries for transient renderer failures.
+
+    Callers should use this inside their leader function when performing
+    non-deterministic web fetches.
+    """
+    attempt = 0
+    last_exc = None
+    while attempt < max_retries:
+        try:
+            if wait_after_loaded is not None:
+                return gl.nondet.web.render(url, mode=mode, wait_after_loaded=wait_after_loaded)
+            return gl.nondet.web.render(url, mode=mode)
+        except Exception as e:
+            last_exc = e
+            attempt += 1
+            continue
+    raise last_exc
