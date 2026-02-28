@@ -1,3 +1,9 @@
+# { "Depends": "py-genlayer:test" }
+#
+# Price Feed with Events — Example GenLayer Intelligent Contract
+# Uses: nondet, storage, access_control helpers from genlayer-utils
+#
+
 from genlayer import *
 
 class PriceFeedWithEvents(gl.Contract):

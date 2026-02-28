@@ -1,3 +1,9 @@
+# { "Depends": "py-genlayer:test" }
+#
+# Price Feed Gas-aware Workflow — Example GenLayer Intelligent Contract
+# Uses: nondet, storage helpers from genlayer-utils
+#
+
 from genlayer import *
 
 # Gas-aware price feed pattern:
