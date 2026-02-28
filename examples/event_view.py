@@ -1,4 +1,4 @@
-# { "Version": "v0.1.0", "Depends": "py-genlayer:test" }
+# {"Depends":"py-genlayer:test"}
 # Event View — Example GenLayer Intelligent Contract
 # Uses: storage, nondet helpers from genlayer-utils
 #
