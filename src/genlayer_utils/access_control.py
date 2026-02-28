@@ -68,6 +68,24 @@ def require_not_zero(address: Address) -> None:
         raise Exception("Zero address not allowed")
 
 
+def forward_to_impl(impl_address: Address, method_name: str, *args, **kwargs):
+    """
+    Helper to forward a write call to an implementation contract.
+
+    Usage: inside a proxy's `__handle_undefined_method__` implementation
+    you can call `forward_to_impl(self._impl, method_name, *args, **kwargs)`
+    to invoke the method on the current implementation while preserving
+    attached value and sender semantics.
+    """
+    impl = gl.get_contract_at(impl_address)
+    try:
+        target = impl.emit(value=gl.message.value)
+        fn = getattr(target, method_name)
+        return fn(*args, **kwargs)
+    except AttributeError:
+        raise Exception(f"Unknown method on implementation: {method_name}")
+
+
 # =============================================================================
 # Ownable Pattern (copy this section into your contract)
 # =============================================================================

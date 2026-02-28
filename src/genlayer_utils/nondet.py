@@ -167,3 +167,47 @@ def web_render_with_retry(url: str, *, mode: str = "text", max_retries: int = 3,
             attempt += 1
             continue
     raise last_exc
+
+
+def web_get_with_retry(url: str, *, headers: dict[str, str | bytes] = {}, max_retries: int = 3, timeout_per_attempt: int = 5) -> 'gl.nondet.web.Response':
+    """
+    Wrapper around `gl.nondet.web.get()` with retry attempts.
+
+    Note: GenLayer SDK does not currently support per-request timeouts
+    at the Python level. The `timeout_per_attempt` argument documents the
+    caller's intent but is advisory; this helper retries on exceptions
+    upto `max_retries` times. Use with care inside equivalence leader
+    functions.
+    """
+    attempt = 0
+    last_exc = None
+    while attempt < max_retries:
+        try:
+            return gl.nondet.web.get(url, headers=headers)
+        except Exception as e:
+            last_exc = e
+            attempt += 1
+            continue
+    raise last_exc
+
+
+def record_event_strict(event_table: 'TreeMap', event_name: str, topics: list[bytes] | tuple[bytes, ...], blob) -> dict:
+    """
+    Record an event into on-chain storage with strict-equality consensus.
+
+    This helper appends an event record (topics + blob) to a `DynArray`
+    stored in `event_table[event_name]` and uses `gl.eq_principle.strict_eq`
+    to ensure validators agree on the produced event payload. Use this when
+    you want emitted events to be part of the contract's deterministic
+    output and validated by the equivalence principle.
+    """
+    def _inner():
+        # Ensure array exists and append
+        arr = event_table.get_or_insert_default(event_name)
+        record = {"topics": list(topics) if isinstance(topics, (list, tuple)) else [topics], "blob": blob}
+        arr.append(record)
+        # Return canonical JSON for strict equality checking
+        return json.dumps(record, sort_keys=True)
+
+    raw = gl.eq_principle.strict_eq(_inner)
+    return json.loads(raw)

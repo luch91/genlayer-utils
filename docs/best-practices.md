@@ -140,3 +140,37 @@ method signatures are compatible between implementations.
 ```text
 # end of document
 ```
+
+## New helpers
+
+`web_get_with_retry()` and `web_render_with_retry()` provide simple retry
+semantics for web calls when providers are flaky. `timeout_per_attempt` is
+advisory — the SDK currently does not expose per-request timeouts at the Python
+level, so the parameter documents intent and future-proofing.
+
+`record_event_strict()` is a helper that appends an event record to an
+on-chain `DynArray` and uses `gl.eq_principle.strict_eq()` to ensure validators
+agree on the event payload. Use it when you want deterministic, validated
+event records in storage (see `src/genlayer_utils/nondet.py`).
+
+## Gas-aware price-feed pattern
+
+When gas estimation isn't available, prefer a two-step workflow:
+
+1. Provide a `@gl.public.view` method that computes or simulates the new state
+     (no writes). Frontends call this to preview the result and estimate the
+     cost.
+2. Submit a minimal `@gl.public.write` that performs only the essential state
+     mutation (e.g., store a single `u256`). This keeps writes small and gas
+     predictable.
+
+See `examples/price_feed_gas_workflow.py` for a concrete demonstration.
+
+## Examples added
+
+- `examples/fact_checker.py` — full fact-checking example using `strict_eq` and
+    `web_llm_strict`.
+- `examples/price_feed_with_events.py` — price feed that emits on-chain event
+    records and raw events.
+- `examples/price_feed_gas_workflow.py` — gas-aware two-step price feed pattern.
+
