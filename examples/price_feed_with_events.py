@@ -1,5 +1,4 @@
-# { "Depends": "py-genlayer:test" }
-#
+# { "Version": "v0.1.0", "Depends": "py-genlayer:test" }
 # Price Feed with Events — Example GenLayer Intelligent Contract
 # Uses: nondet, storage, access_control helpers from genlayer-utils
 #

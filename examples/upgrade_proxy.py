@@ -1,5 +1,4 @@
-# { "Depends": "py-genlayer:test" }
-#
+# { "Version": "v0.1.0", "Depends": "py-genlayer:test" }
 # Upgrade Proxy Pattern — Example GenLayer Intelligent Contract
 # Uses: access_control helper from genlayer-utils
 #

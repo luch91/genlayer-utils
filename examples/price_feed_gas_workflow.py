@@ -1,5 +1,4 @@
-# { "Depends": "py-genlayer:test" }
-#
+# { "Version": "v0.1.0", "Depends": "py-genlayer:test" }
 # Price Feed Gas-aware Workflow — Example GenLayer Intelligent Contract
 # Uses: nondet, storage helpers from genlayer-utils
 #
