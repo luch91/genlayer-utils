@@ -99,12 +99,6 @@ Example: paginating a `TreeMap` in a view method.
 | Calling `gl.nondet` outside equivalent  | Wrap in `gl.eq_principle.*` function                               |
 
 
-> For the full original text, see the [gist](https://gist.github.com/luch91/d865f976ed04785890ca6cf84ef13cce).
-
-```text
-# end of document
-```
-
 ## Event Indexing Pattern
 
 The SDK currently exposes `gl.advanced.emit_raw_event()` but doesn't provide a
@@ -135,12 +129,6 @@ Example (see `examples/upgrade_proxy.py`):
 Note: This is an application-level pattern; for safety, ensure storage layout and
 method signatures are compatible between implementations.
 
-> For the full original text, see the [gist](https://gist.github.com/luch91/d865f976ed04785890ca6cf84ef13cce).
-
-```text
-# end of document
-```
-
 ## New helpers
 
 `web_get_with_retry()` and `web_render_with_retry()` provide simple retry
@@ -157,12 +145,12 @@ event records in storage (see `src/genlayer_utils/nondet.py`).
 
 When gas estimation isn't available, prefer a two-step workflow:
 
-1. Provide a `@gl.public.view` method that computes or simulates the new state
-     (no writes). Frontends call this to preview the result and estimate the
-     cost.
-2. Submit a minimal `@gl.public.write` that performs only the essential state
-     mutation (e.g., store a single `u256`). This keeps writes small and gas
-     predictable.
+1. Perform web/API fetching off-chain in the frontend or relayer.
+2. Provide a pure `@gl.public.view` method that normalizes or previews the
+   exact write payload without calling `gl.nondet.*`.
+3. Submit a minimal `@gl.public.write` that performs only the essential state
+   mutation (e.g., store a single `u256`). This keeps writes small and gas
+   predictable.
 
 See `examples/price_feed_gas_workflow.py` for a concrete demonstration.
 
@@ -173,4 +161,6 @@ See `examples/price_feed_gas_workflow.py` for a concrete demonstration.
 - `examples/price_feed_with_events.py` — price feed that emits on-chain event
     records and raw events.
 - `examples/price_feed_gas_workflow.py` — gas-aware two-step price feed pattern.
+
+> For the full original text, see the [gist](https://gist.github.com/luch91/d865f976ed04785890ca6cf84ef13cce).
 
