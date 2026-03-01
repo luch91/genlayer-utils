@@ -104,6 +104,10 @@ Complete, deployable contracts that demonstrate each module:
 | [price_feed.py](examples/price_feed.py) | web_oracle, access_control | Decentralized price oracle |
 | [content_moderator.py](examples/content_moderator.py) | nondet, llm, storage | AI content classification |
 | [voting.py](examples/voting.py) | access_control, storage | On-chain voting with roles |
+| [price_feed_with_events.py](examples/price_feed_with_events.py) | storage, access_control | Price feed with queryable event index |
+| [price_feed_gas_workflow.py](examples/price_feed_gas_workflow.py) | storage | Gas-aware preview + minimal write workflow |
+| [upgrade_proxy.py](examples/upgrade_proxy.py) | access_control | Minimal upgradeable proxy forwarding pattern |
+| [event_view.py](examples/event_view.py) | storage | Minimal indexed event storage example |
 
 ---
 
@@ -131,22 +135,28 @@ genlayer-utils/
     access_control.py        # Owner & role-based access guards
     web_oracle.py            # Web data extraction with consensus
     storage.py               # TreeMap/DynArray helpers
-  examples/                  # 4 complete, deployable contracts
+  examples/                  # Example contracts for each pattern
   docs/                      # Documentation for each module
-  tests/                     # Integration tests (gltest)
+  tests/                     # Unit tests plus optional gltest integration tests
 ```
 
 ---
 
 ## Testing
 
-Tests use the [gltest](https://docs.genlayer.com/developers/decentralized-applications/testing) framework. GenLayer Studio must be running.
+The repo contains two test layers:
+
+- Plain `pytest` unit tests for copy-paste helpers and mocked GenLayer behavior
+- Optional `gltest` integration tests for the deployable examples (requires GenLayer Studio)
 
 ```bash
-# Select network
+# Run unit tests
+pytest -q
+
+# For example contract integration tests, select network first
 genlayer network
 
-# Run tests
+# Then run gltest
 gltest
 ```
 

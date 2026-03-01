@@ -1,4 +1,38 @@
+# {"Depends":"py-genlayer:test"}
+# Event View — Example GenLayer Intelligent Contract
+# Uses: storage, nondet helpers from genlayer-utils
+#
+
 from genlayer import *
+
+
+def append_indexed_event(event_table: TreeMap, event_name: str, topics, blob):
+    arr = event_table.get_or_insert_default(event_name)
+    arr.append({"topics": list(topics), "blob": blob})
+
+
+def query_indexed_events(
+    event_table: TreeMap, event_name: str, offset: int = 0, limit: int = 100
+):
+    if event_name not in event_table:
+        return []
+    arr = event_table[event_name]
+    end = offset + limit
+    try:
+        return arr[offset:end]
+    except Exception:
+        items = []
+        idx = 0
+        for item in arr:
+            if idx < offset:
+                idx += 1
+                continue
+            if len(items) >= limit:
+                break
+            items.append(item)
+            idx += 1
+        return items
+
 
 class EventExample(gl.Contract):
     _events: TreeMap[str, DynArray[dict]]

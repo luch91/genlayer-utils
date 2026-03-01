@@ -5,6 +5,10 @@
 # These tests deploy the fact_checker.py example and verify
 # the core flow: submit a claim, resolve it with AI, check results.
 
+import pytest
+
+pytest.importorskip("gltest", exc_type=ImportError)
+
 from gltest import get_contract_factory, default_account
 from gltest.helpers import load_fixture
 from gltest.assertions import tx_execution_succeeded

@@ -5,6 +5,10 @@
 # These tests deploy the price_feed.py example and verify
 # that prices can be fetched from web sources and stored on-chain.
 
+import pytest
+
+pytest.importorskip("gltest", exc_type=ImportError)
+
 from gltest import get_contract_factory, default_account
 from gltest.helpers import load_fixture
 from gltest.assertions import tx_execution_succeeded

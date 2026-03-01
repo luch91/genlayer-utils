@@ -103,7 +103,7 @@ WEB CONTENT:
 {{web_data}}
 
 Respond ONLY with this exact JSON format, nothing else:
-{{"price": "<numeric value as string>", "currency": "<USD|EUR|GBP|etc>", "timestamp": "<if available, otherwise unknown>"}}
+{{{{"price": "<numeric value as string>", "currency": "<USD|EUR|GBP|etc>", "timestamp": "<if available, otherwise unknown>"}}}}
 
 Rules:
 - Extract only the most recent/current price
@@ -140,7 +140,7 @@ WEB CONTENT:
 {{web_data}}
 
 Respond ONLY with this exact JSON format, nothing else:
-{{"score": "<e.g. 2:1, or - if not played>", "winner": <0 for draw, 1 for {team1}, 2 for {team2}, -1 if not played>, "status": "<finished|in_progress|not_started>"}}
+{{{{"score": "<e.g. 2:1, or - if not played>", "winner": <0 for draw, 1 for {team1}, 2 for {team2}, -1 if not played>, "status": "<finished|in_progress|not_started>"}}}}
 
 Rules:
 - Use -1 for winner if the match hasn't been played yet
